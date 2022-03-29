@@ -1,2 +1,2 @@
 # OTELMetrics
-Test how OpenTelemetry metric works.
+Test how to send metric using OpenTelemetry Java SDK.
