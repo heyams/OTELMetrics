@@ -30,17 +30,18 @@ public class Program {
                 .setInstrumentationVersion("1.0.0")
                 .build();
 
-        LongGaugeBuilder
-        DoubleGaugeBuilder
-        SummaryData
-        DoubleCounter doubleCounter;
+        //TODO: LongGaugeBuilder
+        //TODO: DoubleGaugeBuilder
+        //TODO: SummaryData
+        //TODO: DoubleCounter
+        //TODO test long.max
         LongCounter counter = meter
                 .counterBuilder("MyFruitCounter")
                 .setDescription("MyFruitCounter")
                 .setUnit("1")
                 .build();
 
-        counter.add(Long.MAX_VALUE, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
+        counter.add(1, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
         counter.add(2, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
         counter.add(1, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
         counter.add(2, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "green"));
