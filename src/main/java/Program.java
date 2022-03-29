@@ -1,6 +1,7 @@
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.metrics.DoubleCounter;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.exporter.logging.LoggingMetricExporter;
@@ -50,6 +51,31 @@ public class Program {
 //        counter.add(2, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "green"));
     }
 
+    private static void testDoubleCounter() throws InterruptedException {
+        initMeter();
+
+        DoubleCounter counter = (DoubleCounter)meter
+                .counterBuilder("MyFruitCounter")
+                .setDescription("MyFruitCounter")
+                .setUnit("1")
+                .ofDoubles()
+                .build();
+
+        counter.add(1.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
+        counter.add(2.0, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
+        counter.add(1.0, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
+        counter.add(2.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "green"));
+        counter.add(5.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
+        counter.add(4.0, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
+
+        Thread.sleep(60 * 2 * 1000); // wait for 1 min
+
+        // this should produce the following 3 meters output from OpenTelemetry SDK
+//        counter.add(6, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
+//        counter.add(7, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
+//        counter.add(2, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "green"));
+    }
+
     public static void main(String[] args) {
         //TODO: LongGaugeBuilder
         //TODO: DoubleGaugeBuilder
@@ -58,7 +84,8 @@ public class Program {
         //TODO test long.max
 
         try {
-            testLongCounter();
+//            testLongCounter();
+            testDoubleCounter();
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
