@@ -3,7 +3,9 @@ import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.DoubleCounter;
 import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.LongGaugeBuilder;
 import io.opentelemetry.api.metrics.Meter;
+import io.opentelemetry.api.metrics.ObservableLongGauge;
 import io.opentelemetry.exporter.logging.LoggingMetricExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
@@ -49,12 +51,26 @@ public class Program {
 //        counter.add(2, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "green"));
     }
 
+    private static void testLongGauge() throws InterruptedException {
+        meter.gaugeBuilder("temperature")
+            .ofLongs()
+            .setDescription("the current temperature")
+            .setUnit("C")
+            .buildWithCallback(
+                    m -> {
+                        m.record(1);
+                        m.record(2, Attributes.of(AttributeKey.stringKey("thing"), "engine"));
+                    });
+
+        Thread.sleep(60 * 2 * 1000); // wait for 2 min
+    }
+
     private static void testDoubleCounter() throws InterruptedException {
         DoubleCounter counter = (DoubleCounter)meter
                 .counterBuilder("MyFruitCounter")
+                .ofDoubles()
                 .setDescription("MyFruitCounter")
                 .setUnit("1")
-                .ofDoubles()
                 .build();
 
         counter.add(1.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
@@ -80,7 +96,8 @@ public class Program {
 
         try {
 //            testLongCounter();
-            testDoubleCounter();
+//            testDoubleCounter();
+            testLongGauge();
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
