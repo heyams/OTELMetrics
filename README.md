@@ -1,2 +1,2 @@
 # OTELMetrics
-Test Open Telemetry metrics
+Test how OpenTelemetry metric works.
