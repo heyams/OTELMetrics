@@ -68,19 +68,18 @@ public class Program {
         counter.add(5.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
         counter.add(4.0, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
 
-        Thread.sleep(60 * 2 * 1000); // wait for 1 min
+        Thread.sleep(60 * 2 * 1000); // wait for 2 min
 
         // this should produce the following 3 meters output from OpenTelemetry SDK
-//        counter.add(6, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
-//        counter.add(7, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
-//        counter.add(2, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "green"));
+//        counter.add(6.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
+//        counter.add(7.0, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
+//        counter.add(2.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "green"));
     }
 
     public static void main(String[] args) {
         //TODO: LongGaugeBuilder
         //TODO: DoubleGaugeBuilder
         //TODO: SummaryData
-        //TODO: DoubleCounter
         //TODO test long.max
 
         try {
