@@ -14,7 +14,7 @@ public class Program {
 
     private static Meter meter;
 
-    private static void initMeter() {
+    static {
         LoggingMetricExporter metricExporter = LoggingMetricExporter.create();
         MetricReaderFactory metricReaderFactory = PeriodicMetricReader.newMetricReaderFactory(metricExporter);
         SdkMeterProvider meterProvider = SdkMeterProvider.builder()
@@ -28,8 +28,6 @@ public class Program {
     }
 
     private static void testLongCounter() throws InterruptedException {
-        initMeter();
-
         LongCounter counter = meter
                 .counterBuilder("MyFruitCounter")
                 .setDescription("MyFruitCounter")
@@ -52,8 +50,6 @@ public class Program {
     }
 
     private static void testDoubleCounter() throws InterruptedException {
-        initMeter();
-
         DoubleCounter counter = (DoubleCounter)meter
                 .counterBuilder("MyFruitCounter")
                 .setDescription("MyFruitCounter")
