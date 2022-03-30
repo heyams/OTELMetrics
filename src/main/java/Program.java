@@ -5,6 +5,7 @@ import io.opentelemetry.api.metrics.DoubleCounter;
 import io.opentelemetry.api.metrics.DoubleHistogram;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.LongGaugeBuilder;
+import io.opentelemetry.api.metrics.LongHistogram;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.metrics.ObservableLongGauge;
 import io.opentelemetry.exporter.logging.LoggingMetricExporter;
@@ -107,8 +108,20 @@ public class Program {
                 .setDescription("double histogram")
                 .setUnit("ms")
                 .build();
-        doubleHistogram.record(123);
+        doubleHistogram.record(123.0);
 
+        Thread.sleep(60 * 2 * 1000); // wait for 2 min
+    }
+
+    private static void testLongHistogram() throws InterruptedException {
+        LongHistogram longHistogram = meter.histogramBuilder("http.client.duration")
+                .ofLongs()
+                .setDescription("long histogram")
+                .setUnit("ms")
+                .build();
+        longHistogram.record(123);
+
+        Thread.sleep(60 * 2 * 1000); // wait for 2 min
     }
 
     public static void main(String[] args) {
@@ -119,7 +132,9 @@ public class Program {
 //            testLongCounter();
 //            testDoubleCounter();
 //            testLongGauge();
-            testDoubleGauge();
+//            testDoubleGauge();
+//            testDoubleHistogram();
+            testLongHistogram();
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
