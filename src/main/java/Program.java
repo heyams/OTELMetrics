@@ -2,6 +2,7 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.DoubleCounter;
+import io.opentelemetry.api.metrics.DoubleHistogram;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.LongGaugeBuilder;
 import io.opentelemetry.api.metrics.Meter;
@@ -88,16 +89,37 @@ public class Program {
 //        counter.add(2.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "green"));
     }
 
+    private static void testDoubleGauge() throws InterruptedException {
+        meter.gaugeBuilder("temperature")
+            .setDescription("the current temperature")
+            .setUnit("C")
+            .buildWithCallback(
+                    m -> {
+                        m.record(1.0);
+                        m.record(2.0, Attributes.of(AttributeKey.stringKey("thing"), "engine"));
+                    });
+
+        Thread.sleep(60 * 2 * 1000); // wait for 2 min
+    }
+
+    private static void testDoubleHistogram() throws InterruptedException {
+        DoubleHistogram doubleHistogram = meter.histogramBuilder("http.client.duration")
+                .setDescription("double histogram")
+                .setUnit("ms")
+                .build();
+        doubleHistogram.record(123);
+
+    }
+
     public static void main(String[] args) {
-        //TODO: LongGaugeBuilder
-        //TODO: DoubleGaugeBuilder
         //TODO: SummaryData
         //TODO test long.max
 
         try {
 //            testLongCounter();
 //            testDoubleCounter();
-            testLongGauge();
+//            testLongGauge();
+            testDoubleGauge();
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
