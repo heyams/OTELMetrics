@@ -6,18 +6,21 @@ import io.opentelemetry.api.metrics.DoubleHistogram;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.LongHistogram;
 import io.opentelemetry.api.metrics.Meter;
-import io.opentelemetry.exporter.logging.LoggingMetricExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
+import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.export.MetricReaderFactory;
 import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
+
+import java.util.List;
 
 public class Program {
 
     private static Meter meter;
+    private static InMemoryMetricExporter metricExporter;
 
     static {
-        LoggingMetricExporter metricExporter = LoggingMetricExporter.create();
+        metricExporter = new InMemoryMetricExporter();
         MetricReaderFactory metricReaderFactory = PeriodicMetricReader.newMetricReaderFactory(metricExporter);
         SdkMeterProvider meterProvider = SdkMeterProvider.builder()
                 .registerMetricReader(metricReaderFactory)
@@ -43,8 +46,12 @@ public class Program {
         counter.add(5, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
         counter.add(4, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
 
-        Thread.sleep(60 * 2 * 1000); // wait for 2 min
+        Thread.sleep(90 * 1000); // wait 90 seconds
 
+        List<MetricData> metricDataList = metricExporter.getExportedMetrics();
+        assert(metricDataList.size() == 1);
+        MetricData metricData = metricDataList.get(0);
+        metricData.getData().getPoints()
         // this should produce the following 3 meters output from OpenTelemetry SDK
 //        counter.add(6, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
 //        counter.add(7, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
@@ -62,7 +69,7 @@ public class Program {
                         m.record(2, Attributes.of(AttributeKey.stringKey("thing"), "engine"));
                     });
 
-        Thread.sleep(60 * 2 * 1000); // wait for 2 min
+        Thread.sleep(90 * 1000); // wait 90 seconds
     }
 
     private static void testDoubleCounter() throws InterruptedException {
@@ -80,7 +87,7 @@ public class Program {
         counter.add(5.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
         counter.add(4.0, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
 
-        Thread.sleep(60 * 2 * 1000); // wait for 2 min
+        Thread.sleep(90 * 1000); // wait 90 seconds
 
         // this should produce the following 3 meters output from OpenTelemetry SDK
 //        counter.add(6.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
@@ -98,7 +105,7 @@ public class Program {
                         m.record(2.0, Attributes.of(AttributeKey.stringKey("thing"), "engine"));
                     });
 
-        Thread.sleep(60 * 2 * 1000); // wait for 2 min
+        Thread.sleep(90 * 1000); // wait 90 seconds
     }
 
     private static void testDoubleHistogram() throws InterruptedException {
@@ -108,7 +115,7 @@ public class Program {
                 .build();
         doubleHistogram.record(123.0);
 
-        Thread.sleep(60 * 2 * 1000); // wait for 2 min
+        Thread.sleep(90 * 1000); // wait 90 seconds
     }
 
     private static void testLongHistogram() throws InterruptedException {
@@ -117,9 +124,9 @@ public class Program {
                 .setDescription("long histogram")
                 .setUnit("ms")
                 .build();
-        longHistogram.record(123);
+        longHistogram.record(123L);
 
-        Thread.sleep(60 * 2 * 1000); // wait for 2 min
+        Thread.sleep(90 * 1000); // wait 90 seconds
     }
 
     public static void main(String[] args) {
