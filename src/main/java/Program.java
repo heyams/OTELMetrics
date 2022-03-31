@@ -8,11 +8,16 @@ import io.opentelemetry.api.metrics.LongHistogram;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
+import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.export.MetricReaderFactory;
 import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Program {
 
@@ -51,11 +56,29 @@ public class Program {
         List<MetricData> metricDataList = metricExporter.getExportedMetrics();
         assert(metricDataList.size() == 1);
         MetricData metricData = metricDataList.get(0);
-        metricData.getData().getPoints()
-        // this should produce the following 3 meters output from OpenTelemetry SDK
-//        counter.add(6, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
-//        counter.add(7, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
-//        counter.add(2, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "green"));
+        assert(metricData.getData().getPoints().size() == 3);
+        Collection<LongPointData> points = (Collection<LongPointData>)metricData.getData().getPoints();
+        points = points.stream()
+                        .sorted(Comparator.comparing(o -> o.getValue()))
+                        .collect(Collectors.toList());
+
+        Iterator<LongPointData> iterator = points.iterator();
+        LongPointData longPointData = iterator.next();
+        assert(longPointData.getValue() == 2L);
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("name")) == "apple");
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("color")) == "green");
+
+        longPointData = iterator.next();
+        assert(longPointData.getValue() == 6L);
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("name")) == "apple");
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("color")) == "red");
+
+        longPointData = iterator.next();
+        assert(longPointData.getValue() == 7L);
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("name")) == "lemon");
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("color")) == "yellow");
+
+        metricExporter.reset();
     }
 
     private static void testLongGauge() throws InterruptedException {
@@ -134,12 +157,12 @@ public class Program {
         //TODO test long.max
 
         try {
-//            testLongCounter();
+            testLongCounter();
 //            testDoubleCounter();
 //            testLongGauge();
 //            testDoubleGauge();
 //            testDoubleHistogram();
-            testLongHistogram();
+//            testLongHistogram();
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
