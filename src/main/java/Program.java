@@ -224,12 +224,12 @@ public class Program {
         //TODO: SummaryData
         //TODO test long.max
         try {
-//            testLongCounter();
+            testLongCounter();
             testDoubleCounter();
-//            testLongGauge();
-//            testDoubleGauge();
-//            testDoubleHistogram();
-//            testLongHistogram();
+            testLongGauge();
+            testDoubleGauge();
+            testDoubleHistogram();
+            testLongHistogram();
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
