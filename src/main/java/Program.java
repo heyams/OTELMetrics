@@ -8,6 +8,7 @@ import io.opentelemetry.api.metrics.LongHistogram;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
+import io.opentelemetry.sdk.metrics.data.HistogramPointData;
 import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.export.MetricReaderFactory;
@@ -112,10 +113,32 @@ public class Program {
 
         Thread.sleep(90 * 1000); // wait 90 seconds
 
-        // this should produce the following 3 meters output from OpenTelemetry SDK
-//        counter.add(6.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
-//        counter.add(7.0, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
-//        counter.add(2.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "green"));
+        List<MetricData> metricDataList = metricExporter.getExportedMetrics();
+        assert(metricDataList.size() == 1);
+        MetricData metricData = metricDataList.get(0);
+        assert(metricData.getData().getPoints().size() == 3);
+        Collection<LongPointData> points = (Collection<LongPointData>)metricData.getData().getPoints();
+        points = points.stream()
+                .sorted(Comparator.comparing(o -> o.getValue()))
+                .collect(Collectors.toList());
+
+        Iterator<LongPointData> iterator = points.iterator();
+        LongPointData longPointData = iterator.next();
+        assert(longPointData.getValue() == 2.0);
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("name")) == "apple");
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("color")) == "green");
+
+        longPointData = iterator.next();
+        assert(longPointData.getValue() == 6.0);
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("name")) == "apple");
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("color")) == "red");
+
+        longPointData = iterator.next();
+        assert(longPointData.getValue() == 7.0);
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("name")) == "lemon");
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("color")) == "yellow");
+
+        metricExporter.reset();
     }
 
     private static void testDoubleGauge() throws InterruptedException {
@@ -124,11 +147,22 @@ public class Program {
             .setUnit("C")
             .buildWithCallback(
                     m -> {
-                        m.record(1.0);
                         m.record(2.0, Attributes.of(AttributeKey.stringKey("thing"), "engine"));
                     });
 
         Thread.sleep(90 * 1000); // wait 90 seconds
+
+        List<MetricData> metricDataList = metricExporter.getExportedMetrics();
+        assert(metricDataList.size() == 1);
+        MetricData metricData = metricDataList.get(0);
+        assert(metricData.getData().getPoints().size() == 1);
+        Collection<LongPointData> points = (Collection<LongPointData>)metricData.getData().getPoints();
+        assert(points.size() == 1);
+        LongPointData longPointData = points.iterator().next();
+        assert(longPointData.getValue() == 2.0);
+        assert(longPointData.getAttributes().get(AttributeKey.stringKey("thing")) == "engine");
+
+        metricExporter.reset();
     }
 
     private static void testDoubleHistogram() throws InterruptedException {
@@ -139,6 +173,17 @@ public class Program {
         doubleHistogram.record(123.0);
 
         Thread.sleep(90 * 1000); // wait 90 seconds
+
+        List<MetricData> metricDataList = metricExporter.getExportedMetrics();
+        assert(metricDataList.size() == 1);
+        MetricData metricData = metricDataList.get(0);
+        assert(metricData.getData().getPoints().size() == 1);
+        Collection<HistogramPointData> points = (Collection<HistogramPointData>)metricData.getData().getPoints();
+        assert(points.size() == 1);
+        HistogramPointData histogramPointData = points.iterator().next();
+        assert(histogramPointData.getSum() == 123.0);
+
+        metricExporter.reset();
     }
 
     private static void testLongHistogram() throws InterruptedException {
@@ -150,19 +195,29 @@ public class Program {
         longHistogram.record(123L);
 
         Thread.sleep(90 * 1000); // wait 90 seconds
+
+        List<MetricData> metricDataList = metricExporter.getExportedMetrics();
+        assert(metricDataList.size() == 1);
+        MetricData metricData = metricDataList.get(0);
+        assert(metricData.getData().getPoints().size() == 1);
+        Collection<HistogramPointData> points = (Collection<HistogramPointData>)metricData.getData().getPoints();
+        assert(points.size() == 1);
+        HistogramPointData histogramPointData = points.iterator().next();
+        assert(histogramPointData.getSum() == 123L);
+
+        metricExporter.reset();
     }
 
     public static void main(String[] args) {
         //TODO: SummaryData
         //TODO test long.max
-
         try {
             testLongCounter();
-//            testDoubleCounter();
-//            testLongGauge();
-//            testDoubleGauge();
-//            testDoubleHistogram();
-//            testLongHistogram();
+            testDoubleCounter();
+            testLongGauge();
+            testDoubleGauge();
+            testDoubleHistogram();
+            testLongHistogram();
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
