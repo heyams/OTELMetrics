@@ -8,6 +8,7 @@ import io.opentelemetry.api.metrics.LongHistogram;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
+import io.opentelemetry.sdk.metrics.data.DoublePointData;
 import io.opentelemetry.sdk.metrics.data.HistogramPointData;
 import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
@@ -128,26 +129,26 @@ public class Program {
         assert(metricDataList.size() == 1);
         MetricData metricData = metricDataList.get(0);
         assert(metricData.getData().getPoints().size() == 3);
-        Collection<LongPointData> points = (Collection<LongPointData>)metricData.getData().getPoints();
+        Collection<DoublePointData> points = (Collection<DoublePointData>)metricData.getData().getPoints();
         points = points.stream()
                 .sorted(Comparator.comparing(o -> o.getValue()))
                 .collect(Collectors.toList());
 
-        Iterator<LongPointData> iterator = points.iterator();
-        LongPointData longPointData = iterator.next();
-        assert(longPointData.getValue() == 2.0);
-        assert(longPointData.getAttributes().get(AttributeKey.stringKey("name")) == "apple");
-        assert(longPointData.getAttributes().get(AttributeKey.stringKey("color")) == "green");
+        Iterator<DoublePointData> iterator = points.iterator();
+        DoublePointData doublePointData = iterator.next();
+        assert(doublePointData.getValue() == 2.0);
+        assert(doublePointData.getAttributes().get(AttributeKey.stringKey("name")) == "apple");
+        assert(doublePointData.getAttributes().get(AttributeKey.stringKey("color")) == "green");
 
-        longPointData = iterator.next();
-        assert(longPointData.getValue() == 6.0);
-        assert(longPointData.getAttributes().get(AttributeKey.stringKey("name")) == "apple");
-        assert(longPointData.getAttributes().get(AttributeKey.stringKey("color")) == "red");
+        doublePointData = iterator.next();
+        assert(doublePointData.getValue() == 6.0);
+        assert(doublePointData.getAttributes().get(AttributeKey.stringKey("name")) == "apple");
+        assert(doublePointData.getAttributes().get(AttributeKey.stringKey("color")) == "red");
 
-        longPointData = iterator.next();
-        assert(longPointData.getValue() == 7.0);
-        assert(longPointData.getAttributes().get(AttributeKey.stringKey("name")) == "lemon");
-        assert(longPointData.getAttributes().get(AttributeKey.stringKey("color")) == "yellow");
+        doublePointData = iterator.next();
+        assert(doublePointData.getValue() == 7.0);
+        assert(doublePointData.getAttributes().get(AttributeKey.stringKey("name")) == "lemon");
+        assert(doublePointData.getAttributes().get(AttributeKey.stringKey("color")) == "yellow");
 
         metricExporter.reset();
     }
@@ -167,11 +168,11 @@ public class Program {
         assert(metricDataList.size() == 1);
         MetricData metricData = metricDataList.get(0);
         assert(metricData.getData().getPoints().size() == 1);
-        Collection<LongPointData> points = (Collection<LongPointData>)metricData.getData().getPoints();
+        Collection<DoublePointData> points = (Collection<DoublePointData>)metricData.getData().getPoints();
         assert(points.size() == 1);
-        LongPointData longPointData = points.iterator().next();
-        assert(longPointData.getValue() == 2.0);
-        assert(longPointData.getAttributes().get(AttributeKey.stringKey("thing")) == "engine");
+        DoublePointData doublePointData = points.iterator().next();
+        assert(doublePointData.getValue() == 2.0);
+        assert(doublePointData.getAttributes().get(AttributeKey.stringKey("thing")) == "engine");
 
         metricExporter.reset();
     }
@@ -223,12 +224,12 @@ public class Program {
         //TODO: SummaryData
         //TODO test long.max
         try {
-            testLongCounter();
+//            testLongCounter();
             testDoubleCounter();
-            testLongGauge();
-            testDoubleGauge();
-            testDoubleHistogram();
-            testLongHistogram();
+//            testLongGauge();
+//            testDoubleGauge();
+//            testDoubleHistogram();
+//            testLongHistogram();
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
