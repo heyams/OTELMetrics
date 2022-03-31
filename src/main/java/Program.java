@@ -40,8 +40,8 @@ public class Program {
 
     private static void testLongCounter() throws InterruptedException {
         LongCounter counter = meter
-                .counterBuilder("MyFruitCounter")
-                .setDescription("MyFruitCounter")
+                .counterBuilder("testLongCounter")
+                .setDescription("testLongCounter")
                 .setUnit("1")
                 .build();
 
@@ -83,7 +83,7 @@ public class Program {
     }
 
     private static void testLongGauge() throws InterruptedException {
-        meter.gaugeBuilder("temperature")
+        meter.gaugeBuilder("testLongGauge")
             .ofLongs()
             .setDescription("the current temperature")
             .setUnit("C")
@@ -98,9 +98,9 @@ public class Program {
 
     private static void testDoubleCounter() throws InterruptedException {
         DoubleCounter counter = (DoubleCounter)meter
-                .counterBuilder("MyFruitCounter")
+                .counterBuilder("testDoubleCounter")
                 .ofDoubles()
-                .setDescription("MyFruitCounter")
+                .setDescription("testDoubleCounter")
                 .setUnit("1")
                 .build();
 
@@ -142,7 +142,7 @@ public class Program {
     }
 
     private static void testDoubleGauge() throws InterruptedException {
-        meter.gaugeBuilder("temperature")
+        meter.gaugeBuilder("testDoubleGauge")
             .setDescription("the current temperature")
             .setUnit("C")
             .buildWithCallback(
@@ -166,8 +166,8 @@ public class Program {
     }
 
     private static void testDoubleHistogram() throws InterruptedException {
-        DoubleHistogram doubleHistogram = meter.histogramBuilder("http.client.duration")
-                .setDescription("double histogram")
+        DoubleHistogram doubleHistogram = meter.histogramBuilder("testDoubleHistogram")
+                .setDescription("http.client.duration")
                 .setUnit("ms")
                 .build();
         doubleHistogram.record(123.0);
@@ -187,9 +187,9 @@ public class Program {
     }
 
     private static void testLongHistogram() throws InterruptedException {
-        LongHistogram longHistogram = meter.histogramBuilder("http.client.duration")
+        LongHistogram longHistogram = meter.histogramBuilder("testLongHistogram")
                 .ofLongs()
-                .setDescription("long histogram")
+                .setDescription("http.client.duration")
                 .setUnit("ms")
                 .build();
         longHistogram.record(123L);
