@@ -6,6 +6,7 @@ import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
 import io.opentelemetry.sdk.metrics.export.MetricReaderFactory;
 import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
+import io.opentelemetry.sdk.testing.exporter.InMemoryMetricExporter;
 
 public class MyMeter {
 
@@ -28,7 +29,7 @@ public class MyMeter {
     }
 
     private MyMeter() {
-        metricExporter = new InMemoryMetricExporter();
+        metricExporter = InMemoryMetricExporter.create();
         MetricReaderFactory metricReaderFactory = PeriodicMetricReader.newMetricReaderFactory(metricExporter);
         SdkMeterProvider meterProvider = SdkMeterProvider.builder()
                 .registerMetricReader(metricReaderFactory)

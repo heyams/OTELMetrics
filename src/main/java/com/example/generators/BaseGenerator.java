@@ -1,8 +1,8 @@
 package com.example.generators;
 
-import com.example.InMemoryMetricExporter;
 import com.example.MyMeter;
 import io.opentelemetry.api.metrics.Meter;
+import io.opentelemetry.sdk.testing.exporter.InMemoryMetricExporter;
 
 public abstract class BaseGenerator {
     protected static final Meter meter = MyMeter.getMeter();

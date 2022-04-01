@@ -30,7 +30,7 @@ public final class LongCounterGenerator extends BaseGenerator {
 
         Thread.sleep(90 * 1000); // wait 90 seconds
 
-        List<MetricData> metricDataList = metricExporter.getExportedMetrics();
+        List<MetricData> metricDataList = metricExporter.getFinishedMetricItems();
         assert(metricDataList.size() == 1);
         MetricData metricData = metricDataList.get(0);
         assert(metricData.getData().getPoints().size() == 3);
