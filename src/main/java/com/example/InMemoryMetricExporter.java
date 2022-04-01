@@ -1,3 +1,5 @@
+package com.example;
+
 import io.opentelemetry.sdk.common.CompletableResultCode;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.export.MetricExporter;
@@ -7,10 +9,10 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 // test OpenTelemetry integration
-final class InMemoryMetricExporter implements MetricExporter {
+public final class InMemoryMetricExporter implements MetricExporter {
     private final Queue<MetricData> exportedMetrics = new ConcurrentLinkedQueue<>();
 
-    InMemoryMetricExporter() {}
+    public InMemoryMetricExporter() {}
 
     public List<MetricData> getExportedMetrics() {
         return List.copyOf(exportedMetrics);
