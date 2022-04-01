@@ -13,23 +13,29 @@ import java.util.List;
 
 public class Program {
 
+    private static final Object lock = new Object();
     public static void main(String[] args) {
         //TODO: SummaryData
         //TODO test long.max
+        run();
+    }
 
-        List<BaseGenerator> generatorList = new ArrayList<>();
-        generatorList.add(new LongCounterGenerator());
-        generatorList.add(new DoubleCounterGenerator());
-        generatorList.add(new LongGaugeGenerator());
-        generatorList.add(new DoubleGaugeGenerator());
-        generatorList.add(new DoubleHistogramGenerator());
-        generatorList.add(new LongHistogramGenerator());
-        try {
-            for (BaseGenerator generator : generatorList) {
-                generator.generateMetric();
+    private static void run() {
+        synchronized (lock) {
+            List<BaseGenerator> generatorList = new ArrayList<>();
+            generatorList.add(new LongCounterGenerator());
+            generatorList.add(new DoubleCounterGenerator());
+            generatorList.add(new LongGaugeGenerator());
+            generatorList.add(new DoubleGaugeGenerator());
+            generatorList.add(new DoubleHistogramGenerator());
+            generatorList.add(new LongHistogramGenerator());
+            try {
+                for (BaseGenerator generator : generatorList) {
+                    generator.generateMetric();
+                }
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
             }
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
         }
     }
 }
