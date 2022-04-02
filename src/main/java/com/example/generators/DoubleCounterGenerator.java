@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public final class DoubleCounterGenerator extends BaseGenerator {
     @Override
     public void generateMetric() throws InterruptedException {
-        DoubleCounter counter = (DoubleCounter)meter
+        DoubleCounter counter = meter
                 .counterBuilder("testDoubleCounter")
                 .ofDoubles()
                 .setDescription("testDoubleCounter")
@@ -40,6 +40,8 @@ public final class DoubleCounterGenerator extends BaseGenerator {
                 .sorted(Comparator.comparing(o -> o.getValue()))
                 .collect(Collectors.toList());
 
+        List<String> list = null;
+list.si
         Iterator<DoublePointData> iterator = points.iterator();
         DoublePointData doublePointData = iterator.next();
         assert(doublePointData.getValue() == 2.0);
