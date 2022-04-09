@@ -24,11 +24,11 @@ public class Program {
         synchronized (lock) {
             List<BaseGenerator> generatorList = new ArrayList<>();
 //            generatorList.add(new LongCounterGenerator());
-//            generatorList.add(new DoubleCounterGenerator());
+            generatorList.add(new DoubleCounterGenerator());
 //            generatorList.add(new LongGaugeGenerator());
-            generatorList.add(new DoubleGaugeGenerator());
+//            generatorList.add(new DoubleGaugeGenerator());
 //            generatorList.add(new DoubleHistogramGenerator());
-            generatorList.add(new LongHistogramGenerator());
+//            generatorList.add(new LongHistogramGenerator());
             try {
                 for (BaseGenerator generator : generatorList) {
                     generator.generateMetric();
