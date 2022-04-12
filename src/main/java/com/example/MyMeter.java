@@ -8,6 +8,8 @@ import io.opentelemetry.sdk.metrics.export.MetricReaderFactory;
 import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
 import io.opentelemetry.sdk.testing.exporter.InMemoryMetricExporter;
 
+import java.time.Duration;
+
 public class MyMeter {
 
     private static Meter meter;
@@ -30,12 +32,17 @@ public class MyMeter {
 
     private MyMeter() {
         metricExporter = InMemoryMetricExporter.create();
-        MetricReaderFactory metricReaderFactory = PeriodicMetricReader.newMetricReaderFactory(metricExporter);
+        MetricReaderFactory metricReaderFactory = PeriodicMetricReader
+                .builder(metricExporter)
+                .setInterval(Duration.ofSeconds(30))
+                .newMetricReaderFactory();
         SdkMeterProvider meterProvider = SdkMeterProvider.builder()
                 .registerMetricReader(metricReaderFactory)
                 .build();
 
-        OpenTelemetry openTelemetry = OpenTelemetrySdk.builder().setMeterProvider(meterProvider).buildAndRegisterGlobal();  //GlobalOpenTelemetry.get();
+        OpenTelemetry openTelemetry = OpenTelemetrySdk.builder()
+                .setMeterProvider(meterProvider)
+                .buildAndRegisterGlobal();  //GlobalOpenTelemetry.get();
         meter = openTelemetry.meterBuilder("my-instrumentation-library-name")
                 .setInstrumentationVersion("1.0.0")
                 .build();

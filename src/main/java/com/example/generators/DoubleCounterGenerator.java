@@ -7,6 +7,7 @@ import io.opentelemetry.sdk.metrics.data.DoublePointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Comparator;
@@ -33,7 +34,7 @@ public final class DoubleCounterGenerator extends BaseGenerator {
         counter.add(5.0, Attributes.of(AttributeKey.stringKey("name"), "apple", AttributeKey.stringKey("color"), "red"));
         counter.add(4.0, Attributes.of(AttributeKey.stringKey("name"), "lemon", AttributeKey.stringKey("color"), "yellow"));
 
-        Thread.sleep(90 * 1000); // wait 90 seconds
+        Thread.sleep(40 * 1000); // wait 200 seconds
 
         List<MetricData> metricDataList = metricExporter.getFinishedMetricItems();
         assert(metricDataList.size() == 1);
@@ -44,28 +45,37 @@ public final class DoubleCounterGenerator extends BaseGenerator {
                 .sorted(Comparator.comparing(o -> o.getValue()))
                 .collect(Collectors.toList());
 
-        List<String> list = null;
         Iterator<DoublePointData> iterator = points.iterator();
         DoublePointData doublePointData = iterator.next();
-        System.out.println("epochNanos1: " + Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getEpochNanos())).atOffset(ZoneOffset.UTC));
-        System.out.println("startEpochNanos1: " + Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getStartEpochNanos())).atOffset(ZoneOffset.UTC));
+        OffsetDateTime epochNanos = Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getEpochNanos())).atOffset(ZoneOffset.UTC);
+        OffsetDateTime startEpochNanos = Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getStartEpochNanos())).atOffset(ZoneOffset.UTC);
+        System.out.println("epochNanos1: " + epochNanos);
+        System.out.println("startEpochNanos1: " + startEpochNanos);
         assert(doublePointData.getValue() == 2.0);
         assert(doublePointData.getAttributes().get(AttributeKey.stringKey("name")) == "apple");
         assert(doublePointData.getAttributes().get(AttributeKey.stringKey("color")) == "green");
+        System.out.println("interval1: " + (epochNanos.minusNanos(doublePointData.getStartEpochNanos())).getSecond());
 
         doublePointData = iterator.next();
-        System.out.println("epochNanos2: " + Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getEpochNanos())).atOffset(ZoneOffset.UTC));
-        System.out.println("startEpochNanos2: " + Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getStartEpochNanos())).atOffset(ZoneOffset.UTC));
+        epochNanos = Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getEpochNanos())).atOffset(ZoneOffset.UTC);
+        startEpochNanos = Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getStartEpochNanos())).atOffset(ZoneOffset.UTC);
+        System.out.println("epochNanos2: " + epochNanos);
+        System.out.println("startEpochNanos2: " + startEpochNanos);
         assert(doublePointData.getValue() == 6.0);
         assert(doublePointData.getAttributes().get(AttributeKey.stringKey("name")) == "apple");
         assert(doublePointData.getAttributes().get(AttributeKey.stringKey("color")) == "red");
+        System.out.println("interval2: " + (epochNanos.minusNanos(doublePointData.getStartEpochNanos())).getSecond());
+
 
         doublePointData = iterator.next();
-        System.out.println("epochNanos3: " + Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getEpochNanos())).atOffset(ZoneOffset.UTC));
-        System.out.println("startEpochNanos3: " + Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getStartEpochNanos())).atOffset(ZoneOffset.UTC));
+        epochNanos = Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getEpochNanos())).atOffset(ZoneOffset.UTC);
+        startEpochNanos = Instant.ofEpochMilli(NANOSECONDS.toMillis(doublePointData.getStartEpochNanos())).atOffset(ZoneOffset.UTC);
+        System.out.println("epochNanos3: " + epochNanos);
+        System.out.println("startEpochNanos3: " + startEpochNanos);
         assert(doublePointData.getValue() == 7.0);
         assert(doublePointData.getAttributes().get(AttributeKey.stringKey("name")) == "lemon");
         assert(doublePointData.getAttributes().get(AttributeKey.stringKey("color")) == "yellow");
+        System.out.println("interval3: " + (epochNanos.minusNanos(doublePointData.getStartEpochNanos())).getSecond());
 
         metricExporter.reset();
     }
