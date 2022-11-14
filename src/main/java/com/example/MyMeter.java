@@ -34,7 +34,7 @@ public class MyMeter {
         metricExporter = InMemoryMetricExporter.create();
         MetricReaderFactory metricReaderFactory = PeriodicMetricReader
                 .builder(metricExporter)
-                .setInterval(Duration.ofSeconds(30))
+                .setInterval(Duration.ofSeconds(1))
                 .newMetricReaderFactory();
         SdkMeterProvider meterProvider = SdkMeterProvider.builder()
                 .registerMetricReader(metricReaderFactory)

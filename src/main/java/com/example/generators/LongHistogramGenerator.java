@@ -1,5 +1,6 @@
 package com.example.generators;
 
+import com.google.gson.Gson;
 import io.opentelemetry.api.metrics.LongHistogram;
 import io.opentelemetry.sdk.metrics.data.HistogramPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
@@ -21,11 +22,13 @@ public final class LongHistogramGenerator extends BaseGenerator {
         Thread.sleep(90 * 1000); // wait 90 seconds
 
         List<MetricData> metricDataList = metricExporter.getFinishedMetricItems();
+        System.out.println(new Gson().toJson(metricDataList.get(0)));
         assert(metricDataList.size() == 1);
         MetricData metricData = metricDataList.get(0);
         assert(metricData.getData().getPoints().size() == 1);
         Collection<HistogramPointData> points = (Collection<HistogramPointData>)metricData.getData().getPoints();
         assert(points.size() == 1);
+        System.out.println(new Gson().toJson(points.iterator().next()));
         HistogramPointData histogramPointData = points.iterator().next();
         assert(histogramPointData.getSum() == 123L);
 
